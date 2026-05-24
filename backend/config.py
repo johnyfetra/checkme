@@ -80,6 +80,23 @@ class _Settings:
     JPEG_QUALITY: int        = _int("JPEG_QUALITY", 75)
     STREAM_FPS: int          = _int("STREAM_FPS", 25)
 
+    # ── Tracker ───────────────────────────────────────────────────────────────
+    TRACKER_ENABLED: bool       = os.getenv("TRACKER_ENABLED", "true").lower() == "true"
+    TRACKER_MAX_AGE: int        = _int("TRACKER_MAX_AGE", 30)
+    TRACKER_MIN_HITS: int       = _int("TRACKER_MIN_HITS", 3)
+    TRACKER_IOU_THRESHOLD: float = _float("TRACKER_IOU_THRESHOLD", 0.3)
+
+    # ── Recording ─────────────────────────────────────────────────────────────
+    RECORDING_ENABLED: bool     = os.getenv("RECORDING_ENABLED", "true").lower() == "true"
+    CLIP_POST_SECONDS: int      = _int("CLIP_POST_SECONDS", 15)
+
+    # ── WhatsApp / Twilio ─────────────────────────────────────────────────────
+    TWILIO_ACCOUNT_SID: str     = _str("TWILIO_ACCOUNT_SID", "")
+    TWILIO_AUTH_TOKEN: str      = _str("TWILIO_AUTH_TOKEN", "")
+    WHATSAPP_FROM: str          = _str("WHATSAPP_FROM", "whatsapp:+14155238886")
+    WHATSAPP_TO: str            = _str("WHATSAPP_TO", "")
+    MEDIA_BASE_URL: str         = _str("MEDIA_BASE_URL", "")
+
     # ── Server ────────────────────────────────────────────────────────────────
     HOST: str                = _str("HOST", "0.0.0.0")
     PORT: int                = _int("PORT", 8000)
