@@ -28,6 +28,7 @@ import cv2
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 import database as db
@@ -82,6 +83,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve clips and snapshots as static files
+from pathlib import Path
+_data_dir = Path(__file__).parent / "data"
+_data_dir.mkdir(parents=True, exist_ok=True)
+(_data_dir / "clips").mkdir(exist_ok=True)
+(_data_dir / "snapshots").mkdir(exist_ok=True)
+app.mount("/media", StaticFiles(directory=str(_data_dir)), name="media")
 
 
 # ── WebSocket broadcast ───────────────────────────────────────────────────────
@@ -193,6 +202,7 @@ async def _frame_generator():
                         ev["class_name"],
                         ev["event_type"],
                         ev.get("zone_name"),
+                        snapshot,
                     )
                 )
 

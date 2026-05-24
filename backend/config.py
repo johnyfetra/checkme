@@ -97,6 +97,9 @@ class _Settings:
     WHATSAPP_TO: str            = _str("WHATSAPP_TO", "")
     MEDIA_BASE_URL: str         = _str("MEDIA_BASE_URL", "")
 
+    # ── Image Upload (imgbb free) ─────────────────────────────────────────────
+    IMGBB_API_KEY: str          = _str("IMGBB_API_KEY", "")
+
     # ── Server ────────────────────────────────────────────────────────────────
     HOST: str                = _str("HOST", "0.0.0.0")
     PORT: int                = _int("PORT", 8000)

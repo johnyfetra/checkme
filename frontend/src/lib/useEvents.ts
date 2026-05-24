@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000/ws/events";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const RECONNECT_DELAY_MS = 3000;
 
 export interface AlertEvent {
@@ -19,19 +20,22 @@ export interface AlertEvent {
   timestamp: string;
   class_name: string;
   confidence: number;
+  event_type?: string;
+  zone_name?: string;
   snapshot: string | null;
 }
 
 export interface StatusEvent {
   motion: boolean;
   detections: number;
-  alerts_total: number;
+  events_total: number;
+  recording: boolean;
 }
 
 export interface ConnectedEvent {
   device: string;
   model: string;
-  alerts_total: number;
+  events_total: number;
 }
 
 export type ConnectionState = "connecting" | "open" | "closed";
@@ -110,6 +114,28 @@ export function useEvents(): UseEventsReturn {
     }
 
     connect();
+
+    // Load persisted events from DB on first mount
+    fetch(`${API_URL}/api/events?limit=50`)
+      .then((r) => r.json())
+      .then((events: AlertEvent[]) => {
+        if (!unmounted.current && events.length) {
+          setAlerts((prev) =>
+            prev.length === 0
+              ? events.map((e: Record<string, unknown>) => ({
+                  id: e.id as number,
+                  timestamp: (e as { timestamp?: string }).timestamp ?? "",
+                  class_name: (e as { class_name?: string }).class_name ?? "",
+                  confidence: (e as { confidence?: number }).confidence ?? 0,
+                  event_type: (e as { event_type?: string }).event_type,
+                  zone_name: (e as { zone_name?: string }).zone_name,
+                  snapshot: (e as { snapshot_b64?: string }).snapshot_b64 ?? null,
+                }))
+              : prev,
+          );
+        }
+      })
+      .catch(() => {}); // backend may not be running yet
 
     // Keep-alive ping every 20 s
     const pingInterval = setInterval(() => {

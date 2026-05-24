@@ -54,10 +54,12 @@ async def send_whatsapp_alert(
     class_name: str,
     event_type: str = "detection",
     zone_name: Optional[str] = None,
-    media_url: Optional[str] = None,
+    snapshot_b64: Optional[str] = None,
 ) -> bool:
     """
     Send a WhatsApp message via Twilio asynchronously.
+    If snapshot_b64 is provided and IMGBB_API_KEY is set, uploads the image
+    and attaches it to the WhatsApp message.
     Returns True if sent, False if skipped (cooldown or not configured).
     """
     if not _is_configured():
@@ -70,8 +72,16 @@ async def send_whatsapp_alert(
     _last_sent[class_name] = now
     body = _build_message(class_name, event_type, zone_name)
 
+    # Upload snapshot to imgbb (free) to get a public URL for Twilio
+    media_url: Optional[str] = None
+    if snapshot_b64:
+        try:
+            from uploader import upload_snapshot
+            media_url = await upload_snapshot(snapshot_b64)
+        except Exception:
+            pass  # send text-only if upload fails
+
     try:
-        # Run blocking Twilio call in a thread pool so we don't block the event loop
         await asyncio.to_thread(_send_sync, body, media_url)
         print(f"[Notifier] WhatsApp sent: {class_name} / {event_type}")
         return True
