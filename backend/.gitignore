@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables (NE PAS commiter)
+.env
+
+# YOLO model weights (téléchargés automatiquement)
+*.pt
+*.onnx
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
