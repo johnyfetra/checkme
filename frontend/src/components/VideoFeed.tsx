@@ -18,9 +18,10 @@ const STREAM_URL =
 interface Props {
   hasMotion: boolean;
   detectionCount: number;
+  isRecording?: boolean;
 }
 
-export default function VideoFeed({ hasMotion, detectionCount }: Props) {
+export default function VideoFeed({ hasMotion, detectionCount, isRecording }: Props) {
   const [streamError, setStreamError] = useState(false);
 
   return (
@@ -63,9 +64,17 @@ export default function VideoFeed({ hasMotion, detectionCount }: Props) {
 
       {/* Bottom-left: LIVE badge */}
       {!streamError && (
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-xs font-bold text-white tracking-widest">LIVE</span>
+        <div className="absolute bottom-3 left-3 flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-xs font-bold text-white tracking-widest">LIVE</span>
+          </div>
+          {isRecording && (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-700/80">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-xs font-bold text-white">REC</span>
+            </div>
+          )}
         </div>
       )}
     </div>

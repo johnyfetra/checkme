@@ -36,7 +36,7 @@ export default function DashboardPage() {
       <StatusBar
         connectionState={connectionState}
         deviceInfo={deviceInfo}
-        alertsTotal={status?.alerts_total ?? deviceInfo?.alerts_total ?? 0}
+        alertsTotal={status?.events_total ?? deviceInfo?.events_total ?? 0}
       />
 
       {/* ── Main content ────────────────────────────────────────────────────── */}
@@ -46,6 +46,7 @@ export default function DashboardPage() {
           <VideoFeed
             hasMotion={status?.motion ?? false}
             detectionCount={status?.detections ?? 0}
+            isRecording={status?.recording ?? false}
           />
 
           {/* Quick stats below the video */}
